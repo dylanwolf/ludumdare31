@@ -75,6 +75,7 @@ public class GameState : MonoBehaviour {
         Hook.Current.Reset();
         Player.Current.Reset();
         Store.Current.Reset();
+        BaitIndicator.Current.Reset();
 
         SetStartingValues();
     }
@@ -138,7 +139,6 @@ public class GameState : MonoBehaviour {
         {
             if (Input.GetButtonUp(FIRE))
             {
-                Debug.Log(Input.GetButtonUp(FIRE));
                 State = GlobalState.Playing;
             }
         }

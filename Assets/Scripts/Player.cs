@@ -5,6 +5,8 @@ using System.Linq;
 
 public class Player : MonoBehaviour {
 
+    Animator anim;
+
     public enum PlayerState
     {
         Moving,
@@ -40,9 +42,21 @@ public class Player : MonoBehaviour {
         Current = this;
     }
 
+    public void DoAnimation(int animId)
+    {
+        anim.SetInteger(ANIM_PLAYERSTATE, animId);
+    }
+
+    const string ANIM_PLAYERSTATE = "PlayerState";
+    public const int ANIM_STAND = 0;
+    public const int ANIM_WALK = 1;
+    public const int ANIM_REEL = 2;
+    public const int ANIM_DEPTH = 3;
+
     void Start()
     {
         _t = transform;
+        anim = GetComponent<Animator>();
         startPosition = _t.position;
     }
 
@@ -81,12 +95,15 @@ public class Player : MonoBehaviour {
             if (WalkTimer >= 0)
             {
                 WalkTimer -= Time.deltaTime;
+                if (WalkTimer < 0)
+                    anim.SetInteger(ANIM_PLAYERSTATE, ANIM_STAND);
             }
 
             if (WalkTimer <= 0)
             {
                 if (Mathf.Abs(Input.GetAxis(HORIZONTAL)) > 0)
                 {
+                    anim.SetInteger(ANIM_PLAYERSTATE, ANIM_WALK);
                     WalkTimer = WalkTimerMax;
                     tmpPos = _t.position;
                     tmpScl = _t.localScale;
@@ -98,9 +115,13 @@ public class Player : MonoBehaviour {
                         State = PlayerState.Shopping;
                         Store.Current.ResetForShopping();
                         Store.Current.Toggle(true);
+                        anim.SetInteger(ANIM_PLAYERSTATE, ANIM_STAND);
                     }
-                    if (tmpPos.x < MinX)
+                    else if (tmpPos.x < MinX)
+                    {
                         tmpPos.x = MinX;
+                        anim.SetInteger(ANIM_PLAYERSTATE, ANIM_WALK);
+                    }
 
                     tmpScl.x = Mathf.Abs(tmpScl.x) * -Mathf.Sign(Input.GetAxis(HORIZONTAL));
 
