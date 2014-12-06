@@ -29,7 +29,16 @@ public class Fish : MonoBehaviour {
     bool IsBaited = false;
 
     public float MinInterest = -5.0f;
-    float Interest;
+    public float Interest;
+
+    public int ScoreValue()
+    {
+        if (_t.localScale.x <= 1f || _t.localScale.x >= 2.25f)
+            return 3;
+        else if (_t.localScale.x <= 1.25f || _t.localScale.x >= 2.0f)
+            return 2;
+        return 1;
+    }
 
 	void Start () {
         _r = rigidbody2D;
@@ -110,7 +119,7 @@ public class Fish : MonoBehaviour {
                 }
             }
         }
-        else
+        else if (GameState.Current.State != GameState.GlobalState.GameOver)
         {
             if (!IsFrozen)
             {
@@ -149,7 +158,6 @@ public class Fish : MonoBehaviour {
                 tmpVector.x = Mathf.Abs(tmpVector.x) * -Mathf.Sign(_r.velocity.x);
                 _t.localScale = tmpVector;
                 IsBaited = true;
-                Hook.Nibble();
             }
         }
     }

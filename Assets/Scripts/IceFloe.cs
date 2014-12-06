@@ -20,6 +20,12 @@ public class IceFloe : MonoBehaviour {
         _r = renderer;
     }
 
+    public void Reset()
+    {
+        IsCleared = false;
+        Timer = 0;
+    }
+
 	void FixedUpdate () {
         if (IsCleared)
         {
@@ -33,6 +39,7 @@ public class IceFloe : MonoBehaviour {
                 if (Timer < 0 && !((Player.Current.State == Player.PlayerState.Fishing || Player.Current.State == Player.PlayerState.Reeling) && Player.Current.PickTarget.Contains(this)))
                 {
                     IsCleared = false;
+                    Player.Current.UpdateCanFish();
                 }
             }
         }

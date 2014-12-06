@@ -4,8 +4,17 @@ using System.Collections.Generic;
 
 public class GameState : MonoBehaviour {
 
+    [System.NonSerialized]
+    public int Moneys;
+
+    [System.NonSerialized]
+    public float Times;
+
     public Transform FishPrefab;
     public int InitialFish = 5;
+
+    [System.NonSerialized]
+    public List<IceFloe> IceFloes = new List<IceFloe>();
 
     [System.NonSerialized]
     public List<Fish> Fishes = new List<Fish>();
@@ -26,7 +35,9 @@ public class GameState : MonoBehaviour {
 
     public enum GlobalState
     {
-        Playing
+        Playing,
+        GameOver,
+        Paused
     }
 
     void Awake()
@@ -37,7 +48,36 @@ public class GameState : MonoBehaviour {
 	void Start () {
         SpawnIceFloes();
         SpawnFish(InitialFish);
+        SetStartingValues();
 	}
+
+    void SetStartingValues()
+    {
+        Moneys = 3;
+        Times = 3 * 60;
+        State = GlobalState.Paused;
+    }
+
+    public void Reset()
+    {
+        foreach (Fish f in Fishes)
+        {
+            DestroyObject(f.gameObject);
+        }
+        Fishes.Clear();
+        SpawnFish(InitialFish);
+
+        foreach (IceFloe f in IceFloes)
+        {
+            f.Reset();
+        }
+
+        Hook.Current.Reset();
+        Player.Current.Reset();
+        Store.Current.Reset();
+
+        SetStartingValues();
+    }
 
     float x;
     Transform tmpObj;
@@ -53,6 +93,8 @@ public class GameState : MonoBehaviour {
             tmpObj.position = tmpVector;
 
             x += IcefloeWidth;
+
+            IceFloes.Add(tmpObj.GetComponent<IceFloe>());
         }
     }
 
@@ -69,15 +111,35 @@ public class GameState : MonoBehaviour {
         return ((max - min) * Random.value) + min;
     }
 
+    void FixedUpdate()
+    {
+        if (State == GlobalState.Playing)
+        {
+            Times -= Time.fixedDeltaTime;
+            if (Times < 0)
+                State = GlobalState.GameOver;
+        }
+    }
+
+    const string FIRE = "Fire1";
+
     void Update()
     {
-        if (Fishes.Count < MaxFish)
+        if (Fishes.Count < MaxFish && State == GlobalState.Playing)
         {
             FishTimer -= Time.deltaTime;
             if (FishTimer < 0)
             {
                 SpawnFish(1);
                 FishTimer = RandomFloat(MinFishTimer, MaxFishTimer);
+            }
+        }
+        else if (State == GlobalState.Paused)
+        {
+            if (Input.GetButtonUp(FIRE))
+            {
+                Debug.Log(Input.GetButtonUp(FIRE));
+                State = GlobalState.Playing;
             }
         }
     }

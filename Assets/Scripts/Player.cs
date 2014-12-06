@@ -9,7 +9,8 @@ public class Player : MonoBehaviour {
     {
         Moving,
         Fishing,
-        Reeling
+        Reeling,
+        Shopping
     }
 
     public static Player Current;
@@ -25,6 +26,15 @@ public class Player : MonoBehaviour {
 
     Transform _t;
 
+    private Vector3 startPosition;
+
+    public bool CanFish;
+
+    public void UpdateCanFish()
+    {
+        CanFish = !Player.Current.PickTarget.Any(pt => !pt.IsCleared);
+    }
+
     void Awake()
     {
         Current = this;
@@ -33,6 +43,13 @@ public class Player : MonoBehaviour {
     void Start()
     {
         _t = transform;
+        startPosition = _t.position;
+    }
+
+    public void Reset()
+    {
+        _t.position = startPosition;
+        State = PlayerState.Moving;
     }
 
     [System.NonSerialized]
@@ -41,11 +58,13 @@ public class Player : MonoBehaviour {
     public void SetIcePick(Collider2D collider)
     {
         PickTarget.Add(collider.GetComponent<IceFloe>());
+        UpdateCanFish();
     }
 
     public void ClearIcePick(Collider2D collider)
     {
         PickTarget.Remove(collider.GetComponent<IceFloe>());
+        UpdateCanFish();
     }
 
     const string HORIZONTAL = "Horizontal";
@@ -74,7 +93,12 @@ public class Player : MonoBehaviour {
                     tmpPos.x += Mathf.Sign(Input.GetAxis(HORIZONTAL)) * WalkStep;
 
                     if (tmpPos.x > MaxX)
+                    {
                         tmpPos.x = MaxX;
+                        State = PlayerState.Shopping;
+                        Store.Current.ResetForShopping();
+                        Store.Current.Toggle(true);
+                    }
                     if (tmpPos.x < MinX)
                         tmpPos.x = MinX;
 
@@ -91,6 +115,7 @@ public class Player : MonoBehaviour {
                 {
                     f.IsCleared = true;
                 }
+                CanFish = true;
             }
         }
 	}
