@@ -33,15 +33,20 @@ public class Hook : MonoBehaviour {
     public float MaxInterest = 5.0f;
     public float NibbleChance = 0.0f;
 
+    [System.NonSerialized]
+    public int Bait = -1;
+
     public static void ClearBait()
     {
-        Current.MaxInterest = 5.0f;
-        Current.baitCollider.radius = 0.5f;
+        Current.Bait = -1;
+        Current.MaxInterest = -1f;
+        Current.baitCollider.radius = 0.00001f;
         Current.NibbleChance = 0.0f;
     }
 
-    public static void SetBait(float interest, float radius, float nibbleChance)
+    public static void SetBait(int baitId, float interest, float radius, float nibbleChance)
     {
+        Current.Bait = baitId;
         Current.MaxInterest = interest;
         Current.baitCollider.radius = radius;
         Current.NibbleChance = nibbleChance;
@@ -51,6 +56,7 @@ public class Hook : MonoBehaviour {
     {
         if (Random.value <= Current.NibbleChance)
         {
+            Debug.Log("Lost bait!");
             ClearBait();
         }
     }
@@ -67,23 +73,29 @@ public class Hook : MonoBehaviour {
         _lr = _playerTransform.FindChild("Fishing Line").GetComponent<LineRenderer>();
 
         baitCollider = transform.FindChild("Bait").GetComponent<CircleCollider2D>();
+        ClearBait();
 	}
+
+    public void Reset()
+    {
+        ClearBait();
+    }
 
     const string VERTICAL = "Vertical";
 
     Vector3 tmpVector;
     void FixedUpdate () {
 
-        if (Player.Current.State == Player.PlayerState.Fishing)
+        if (Player.Current.State == Player.PlayerState.Fishing && GameState.Current.State == GameState.GlobalState.Playing)
         {
             if (Mathf.Abs(Input.GetAxis(VERTICAL)) > 0)
             {
-                Depth -= ReelSpeed * Input.GetAxis(VERTICAL) * Time.fixedDeltaTime * (Input.GetAxis(VERTICAL) < 0 ? ReelDownMultiplier : 1);
-                if (Depth <= MinDepth)
-                    Player.Current.State = Player.PlayerState.Moving;
-                else if (Depth > MaxDepth)
+                Depth -= ReelSpeed * Input.GetAxis(VERTICAL) * Time.fixedDeltaTime * (Input.GetAxis(VERTICAL) > 0 ? ReelDownMultiplier : 1);
+                if (Depth > MaxDepth)
                     Depth = MaxDepth;
             }
+            if (Depth <= MinDepth)
+                Player.Current.State = Player.PlayerState.Moving;
             DrawFishingLine();
         }
         else if (Player.Current.State == Player.PlayerState.Reeling)
@@ -95,6 +107,8 @@ public class Hook : MonoBehaviour {
                 Player.Current.State = Player.PlayerState.Moving;
                 foreach (FishMouth fish in HookedFishes)
                 {
+                    Hook.Nibble();
+                    GameState.Current.Moneys += fish.Fish.ScoreValue();
                     GameState.Current.Fishes.Remove(fish.Fish);
                     DestroyObject(fish.Fish.gameObject);
                 }
@@ -107,7 +121,7 @@ public class Hook : MonoBehaviour {
         {
             _lr.enabled = false;
 
-            if (Player.Current.State == Player.PlayerState.Moving && Input.GetAxis(VERTICAL) < 0 && !Player.Current.PickTarget.Any(pt => !pt.IsCleared))
+            if (Player.Current.State == Player.PlayerState.Moving && Input.GetAxis(VERTICAL) < 0 && Player.Current.CanFish)
             {
                 Depth = MinDepth;
                 Player.Current.State = Player.PlayerState.Fishing;
