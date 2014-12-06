@@ -29,14 +29,13 @@ public class Fish : MonoBehaviour {
     bool IsBaited = false;
 
     public float MinInterest = -5.0f;
-    public float MaxInterest = 1.0f;
     float Interest;
 
 	void Start () {
         _r = rigidbody2D;
         _t = transform;
 
-        Interest = MaxInterest;
+        Interest = Hook.Current.MaxInterest;
         RandomizeFish();
 	}
 
@@ -74,12 +73,12 @@ public class Fish : MonoBehaviour {
         // Only reset interest if the fish isn't disinterested--otherwise, run out the timer
         if (Interest >= 0)
         {
-            Interest = MaxInterest;
+            Interest = Hook.Current.MaxInterest;
         }
     }
 	
 	void Update () {
-        if (GameState.CurrentGlobal == GameState.GlobalState.Playing)
+        if (GameState.Current.State == GameState.GlobalState.Playing)
         {
             if (IsFrozen)
             {
@@ -96,7 +95,7 @@ public class Fish : MonoBehaviour {
                     RandomizeMovement();
                 }
                 if (Interest < MinInterest)
-                    Interest = MaxInterest;
+                    Interest = Hook.Current.MaxInterest;
             }
 
             if (!IsBaited)
@@ -130,6 +129,12 @@ public class Fish : MonoBehaviour {
 
     public void Bait(Vector3 bait, Vector3 mouth)
     {
+        if (Player.Current.State != Player.PlayerState.Fishing)
+        {
+            IsBaited = false;
+            return;
+        }
+
         // Only bait until the fish is no longer interested
         if (Interest >= 0)
         {
@@ -144,6 +149,7 @@ public class Fish : MonoBehaviour {
                 tmpVector.x = Mathf.Abs(tmpVector.x) * -Mathf.Sign(_r.velocity.x);
                 _t.localScale = tmpVector;
                 IsBaited = true;
+                Hook.Nibble();
             }
         }
     }

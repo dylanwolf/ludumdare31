@@ -12,7 +12,9 @@ public class Player : MonoBehaviour {
         Reeling
     }
 
-    public static PlayerState CurrentState;
+    public static Player Current;
+
+    public PlayerState State;
 
     public float MinX = -4.75f;
     public float MaxX = 2.25f;
@@ -23,12 +25,18 @@ public class Player : MonoBehaviour {
 
     Transform _t;
 
+    void Awake()
+    {
+        Current = this;
+    }
+
     void Start()
     {
         _t = transform;
     }
 
-    public static List<IceFloe> PickTarget = new List<IceFloe>();
+    [System.NonSerialized]
+    public List<IceFloe> PickTarget = new List<IceFloe>();
 
     public void SetIcePick(Collider2D collider)
     {
@@ -46,10 +54,10 @@ public class Player : MonoBehaviour {
     private Vector3 tmpPos;
     private Vector3 tmpScl;
 	void Update () {
-        if (GameState.CurrentGlobal != GameState.GlobalState.Playing)
+        if (GameState.Current.State != GameState.GlobalState.Playing)
             return;
 
-        if (CurrentState == PlayerState.Moving)
+        if (State == PlayerState.Moving)
         {
             if (WalkTimer >= 0)
             {

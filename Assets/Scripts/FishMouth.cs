@@ -3,34 +3,43 @@ using System.Collections;
 
 public class FishMouth : MonoBehaviour {
 
-    Fish _fish;
+    [System.NonSerialized]
+    public Fish Fish;
     Collider2D _c;
 
 	// Use this for initialization
 	void Start () {
-	    _fish = transform.parent.GetComponent<Fish>();
+	    Fish = transform.parent.GetComponent<Fish>();
         _c = collider2D;
 	}
 
     const string BAIT = "Bait";
+    const string HOOK = "Hook";
 
     public void Disable(Vector3 hook)
     {
-        _fish.enabled = false;
-        foreach (Collider2D c in _fish.GetComponentsInChildren<Collider2D>())
+        Fish.enabled = false;
+        foreach (Collider2D c in Fish.GetComponentsInChildren<Collider2D>())
         {
             c.enabled = false;
         }
-        _fish.rigidbody2D.velocity = Vector3.zero;
+        Fish.rigidbody2D.velocity = Vector3.zero;
         this.enabled = false;
-        _fish.transform.position = hook;
+    }
+
+    void OnTriggerEnter2D(Collider2D collider)
+    {
+        if (collider.tag == HOOK && Player.Current.State == Player.PlayerState.Fishing)
+        {
+            Hook.Current.HookedFishes.Add(this);
+        }
     }
 
     void OnTriggerStay2D(Collider2D collider)
     {
         if (collider.tag == BAIT)
         {
-            _fish.Bait(collider.bounds.center, _c.bounds.center);
+            Fish.Bait(collider.bounds.center, _c.bounds.center);              
         }
     }
 
@@ -38,7 +47,12 @@ public class FishMouth : MonoBehaviour {
     {
         if (collider.tag == BAIT)
         {
-            _fish.RandomizeMovement();
+            Fish.RandomizeMovement();
+        }
+
+        if (collider.tag == HOOK && Player.Current.State == Player.PlayerState.Fishing)
+        {
+            Hook.Current.HookedFishes.Remove(this);
         }
     }
 }

@@ -27,10 +27,10 @@ public class IceFloe : MonoBehaviour {
             {
                 Timer = RandomFloat(MinTimer, MaxTimer);
             }
-            else if (GameState.CurrentGlobal == GameState.GlobalState.Playing)
+            else if (GameState.Current.State == GameState.GlobalState.Playing)
             {
                 Timer -= Time.fixedDeltaTime;
-                if (Timer < 0 && !((Player.CurrentState == Player.PlayerState.Fishing || Player.CurrentState == Player.PlayerState.Reeling) && Player.PickTarget.Contains(this)))
+                if (Timer < 0 && !((Player.Current.State == Player.PlayerState.Fishing || Player.Current.State == Player.PlayerState.Reeling) && Player.Current.PickTarget.Contains(this)))
                 {
                     IsCleared = false;
                 }

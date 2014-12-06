@@ -7,7 +7,8 @@ public class GameState : MonoBehaviour {
     public Transform FishPrefab;
     public int InitialFish = 5;
 
-    public static List<Fish> Fish = new List<Fish>();
+    [System.NonSerialized]
+    public List<Fish> Fishes = new List<Fish>();
 
     public Transform IcefloePrefab;
     public float MinIcefloeX = -4.25f;
@@ -19,11 +20,18 @@ public class GameState : MonoBehaviour {
     public float MaxFishTimer = 3.0f;
     public int MaxFish = 10;
 
-    public static GlobalState CurrentGlobal;
+    public static GameState Current;
+
+    public GlobalState State;
 
     public enum GlobalState
     {
         Playing
+    }
+
+    void Awake()
+    {
+        Current = this;
     }
 
 	void Start () {
@@ -52,7 +60,7 @@ public class GameState : MonoBehaviour {
     {
         for (int i =0; i < number; i++)
         {
-            Fish.Add(((Transform)Instantiate(FishPrefab)).GetComponent<Fish>());
+            Fishes.Add(((Transform)Instantiate(FishPrefab)).GetComponent<Fish>());
         }
     }
 
@@ -63,7 +71,7 @@ public class GameState : MonoBehaviour {
 
     void Update()
     {
-        if (Fish.Count < MaxFish)
+        if (Fishes.Count < MaxFish)
         {
             FishTimer -= Time.deltaTime;
             if (FishTimer < 0)
