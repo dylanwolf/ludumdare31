@@ -56,7 +56,6 @@ public class Hook : MonoBehaviour {
     {
         if (Random.value <= Current.NibbleChance)
         {
-            Debug.Log("Lost bait!");
             ClearBait();
         }
     }
@@ -90,12 +89,27 @@ public class Hook : MonoBehaviour {
         {
             if (Mathf.Abs(Input.GetAxis(VERTICAL)) > 0)
             {
+                Player.Current.DoAnimation(Player.ANIM_DEPTH);
                 Depth -= ReelSpeed * Input.GetAxis(VERTICAL) * Time.fixedDeltaTime * (Input.GetAxis(VERTICAL) > 0 ? ReelDownMultiplier : 1);
                 if (Depth > MaxDepth)
+                {
                     Depth = MaxDepth;
+                    Player.Current.DoAnimation(Player.ANIM_STAND);
+                }
+                else
+                {
+                    Player.Current.DoAnimation(Player.ANIM_DEPTH);
+                }
+            }
+            else
+            {
+                Player.Current.DoAnimation(Player.ANIM_STAND);
             }
             if (Depth <= MinDepth)
+            {
                 Player.Current.State = Player.PlayerState.Moving;
+                Player.Current.DoAnimation(Player.ANIM_STAND);
+            }
             DrawFishingLine();
         }
         else if (Player.Current.State == Player.PlayerState.Reeling)
@@ -113,6 +127,7 @@ public class Hook : MonoBehaviour {
                     DestroyObject(fish.Fish.gameObject);
                 }
                 HookedFishes.Clear();
+                Player.Current.DoAnimation(Player.ANIM_STAND);
             }
 
             DrawFishingLine();
@@ -164,10 +179,12 @@ public class Hook : MonoBehaviour {
         {
             if (Player.Current.State == Player.PlayerState.Fishing)
             {
+                Player.Current.DoAnimation(Player.ANIM_REEL);
                 ReelAnimTimer = 0;
                 Player.Current.State = Player.PlayerState.Reeling;
                 foreach (FishMouth fish in HookedFishes)
                 {
+                    fish.Fish.ReelingIn();
                     fish.Disable(_t.position);
                     fish.Fish.transform.parent = _t;
                 }

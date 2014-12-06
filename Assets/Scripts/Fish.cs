@@ -31,6 +31,8 @@ public class Fish : MonoBehaviour {
     public float MinInterest = -5.0f;
     public float Interest;
 
+    Animator anim;
+
     public int ScoreValue()
     {
         if (_t.localScale.x <= 1f || _t.localScale.x >= 2.25f)
@@ -43,6 +45,7 @@ public class Fish : MonoBehaviour {
 	void Start () {
         _r = rigidbody2D;
         _t = transform;
+        anim = GetComponent<Animator>();
 
         Interest = Hook.Current.MaxInterest;
         RandomizeFish();
@@ -68,9 +71,18 @@ public class Fish : MonoBehaviour {
         RandomizeMovement();
     }
 
+    public void ReelingIn()
+    {
+        anim.speed = 3.0f;
+    }
+
+    float speed;
     public void RandomizeMovement()
     {
-        _r.velocity = RandomFloat(MinSpeed, MaxSpeed) * Random.onUnitSphere;
+        speed = RandomFloat(MinSpeed, MaxSpeed);
+        _r.velocity = speed * Random.onUnitSphere;
+
+        anim.speed = speed;
 
         tmpVector = _t.localScale;
         tmpVector.x = Mathf.Abs(tmpVector.x) * -Mathf.Sign(_r.velocity.x);
@@ -147,9 +159,10 @@ public class Fish : MonoBehaviour {
         // Only bait until the fish is no longer interested
         if (Interest >= 0)
         {
-            tmpVector = (bait - mouth).normalized * RandomFloat(MinSpeed, MaxSpeed);
+            tmpVector = (bait - mouth).normalized * MaxSpeed;
             tmpVector.z = 0;
             _r.velocity = tmpVector;
+            anim.speed = MaxSpeed;
 
             // If we haven't yet been baited, flip to the direction of the hook
             if (!IsBaited)
