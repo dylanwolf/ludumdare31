@@ -39,7 +39,7 @@ public class Hook : MonoBehaviour {
     public static void ClearBait()
     {
         Current.Bait = -1;
-        Current.MaxInterest = -1f;
+        Current.MaxInterest = 0;
         Current.baitCollider.radius = 0.00001f;
         Current.NibbleChance = 0.0f;
     }
