@@ -54,6 +54,7 @@ public class SoundBoard : MonoBehaviour {
     public AudioClip[] EatBaitSounds;
     public AudioClip[] TimeUpSounds;
     public AudioClip[] IcePickSounds;
+    public AudioClip[] StartupSounds;
 
     public AudioSource ReelSound;
     public AudioSource CastSound;
@@ -103,6 +104,14 @@ public class SoundBoard : MonoBehaviour {
         if (Current != null)
         {
             Current.PlaySound(GetRandomClip(Current.IcePickSounds));
+        }
+    }
+
+    public static void PlayStartup()
+    {
+        if (Current != null)
+        {
+            Current.PlaySound(GetRandomClip(Current.StartupSounds));
         }
     }
 

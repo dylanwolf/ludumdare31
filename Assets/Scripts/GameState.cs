@@ -142,6 +142,7 @@ public class GameState : MonoBehaviour {
         {
             if (Input.GetButtonUp(FIRE))
             {
+                SoundBoard.PlayStartup();
                 State = GlobalState.Playing;
             }
         }
