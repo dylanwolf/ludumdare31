@@ -14,6 +14,7 @@ public class InstructionsDisplay : MonoBehaviour {
     Renderer[] ShopRenderers;
     Renderer[] ReelRenderers;
     Renderer[] StartRenderers;
+    Renderer[] TimeUpRenderers;
 
     const string ICEPICK = "IcePick";
     const string FISH = "Fish";
@@ -21,6 +22,7 @@ public class InstructionsDisplay : MonoBehaviour {
     const string SHOP = "Shop";
     const string REEL = "Reel";
     const string START = "Start";
+    const string TIMEUP = "TimeUp";
 
 	void Start () {
         _t = transform;
@@ -30,6 +32,7 @@ public class InstructionsDisplay : MonoBehaviour {
         ShopRenderers = CollectRenderers(SHOP);
         ReelRenderers = CollectRenderers(REEL);
         StartRenderers = CollectRenderers(START);
+        TimeUpRenderers = CollectRenderers(TIMEUP);
 	}
 
     Renderer[] CollectRenderers(string parentName)
@@ -60,6 +63,17 @@ public class InstructionsDisplay : MonoBehaviour {
                 Toggle(ShopRenderers, false);
                 Toggle(ReelRenderers, false);
                 Toggle(StartRenderers, true);
+                Toggle(TimeUpRenderers, false);
+            }
+            else if (GameState.Current.State == GameState.GlobalState.GameOver)
+            {
+                Toggle(FishRenderers, false);
+                Toggle(IcePickRenderers, false);
+                Toggle(MoveRenderers, false);
+                Toggle(ShopRenderers, false);
+                Toggle(ReelRenderers, false);
+                Toggle(StartRenderers, false);
+                Toggle(TimeUpRenderers, true);
             }
             else
             {
@@ -72,6 +86,7 @@ public class InstructionsDisplay : MonoBehaviour {
                         Toggle(ShopRenderers, false);
                         Toggle(ReelRenderers, true);
                         Toggle(StartRenderers, false);
+                        Toggle(TimeUpRenderers, false);
                         break;
 
                     case Player.PlayerState.Moving:
@@ -81,6 +96,7 @@ public class InstructionsDisplay : MonoBehaviour {
                         Toggle(ShopRenderers, false);
                         Toggle(ReelRenderers, false);
                         Toggle(StartRenderers, false);
+                        Toggle(TimeUpRenderers, false);
                         break;
 
                     case Player.PlayerState.Reeling:
@@ -90,6 +106,7 @@ public class InstructionsDisplay : MonoBehaviour {
                         Toggle(ShopRenderers, false);
                         Toggle(ReelRenderers, false);
                         Toggle(StartRenderers, false);
+                        Toggle(TimeUpRenderers, false);
                         break;
 
                     case Player.PlayerState.Shopping:
@@ -99,6 +116,7 @@ public class InstructionsDisplay : MonoBehaviour {
                         Toggle(ShopRenderers, true);
                         Toggle(ReelRenderers, false);
                         Toggle(StartRenderers, false);
+                        Toggle(TimeUpRenderers, false);
                         break;
                 }
             }

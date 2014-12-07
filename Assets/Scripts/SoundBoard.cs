@@ -30,6 +30,17 @@ public class SoundBoard : MonoBehaviour {
         }
     }
 
+    static void PlayLoopingSound(AudioSource src, bool playing, float delay)
+    {
+        if (src != null)
+        {
+            if (playing && !src.isPlaying)
+                src.PlayDelayed(delay);
+            else if (!playing && src.isPlaying)
+                src.Stop();
+        }
+    }
+
     void PlaySound(AudioClip clip)
     {
         if (clip == null)
@@ -58,6 +69,7 @@ public class SoundBoard : MonoBehaviour {
 
     public AudioSource ReelSound;
     public AudioSource CastSound;
+    public AudioSource MusicSource;
 
     public static void PlayBuy()
     {
@@ -128,6 +140,14 @@ public class SoundBoard : MonoBehaviour {
         if (Current != null)
         {
             PlayLoopingSound(Current.ReelSound, playing);
+        }
+    }
+
+    public static void PlayMusic(bool playing)
+    {
+        if (Current != null)
+        {
+            PlayLoopingSound(Current.MusicSource, playing, Current.StartupSounds[0].length);
         }
     }
 }
