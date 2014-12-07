@@ -118,7 +118,10 @@ public class GameState : MonoBehaviour {
         {
             Times -= Time.fixedDeltaTime;
             if (Times < 0)
+            {
+                SoundBoard.PlayTimeUp();
                 State = GlobalState.GameOver;
+            }
         }
     }
 

@@ -16,7 +16,7 @@ public class BaitIndicator : MonoBehaviour {
 
     public void Reset()
     {
-        lastBait = -1;
+        lastBait = -2;
         Timer = 0;
     }
 
