@@ -108,15 +108,18 @@ public class Fish : MonoBehaviour {
             }
 
             // Count down timer if the fish is on the hook, or if it's disinterested
-            if (IsBaited || (Interest > MinInterest && Interest < 0))
+            if (IsBaited || Interest <= 0)
             {
                 Interest -= Time.deltaTime;
                 if (IsBaited && Interest < 0)
                 {
                     RandomizeMovement();
                 }
-                if (Interest < MinInterest)
+                if (Interest <= MinInterest)
+                {
                     Interest = Hook.Current.MaxInterest;
+                    IsBaited = false;
+                }
             }
 
             if (!IsBaited)
