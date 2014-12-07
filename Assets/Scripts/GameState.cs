@@ -54,7 +54,7 @@ public class GameState : MonoBehaviour {
     void SetStartingValues()
     {
         Moneys = 3;
-        Times = 3 * 60;
+        Times = 2 * 60;
         State = GlobalState.Paused;
     }
 
@@ -119,6 +119,7 @@ public class GameState : MonoBehaviour {
             Times -= Time.fixedDeltaTime;
             if (Times < 0)
             {
+                SoundBoard.PlayMusic(false);
                 SoundBoard.PlayTimeUp();
                 State = GlobalState.GameOver;
             }
@@ -143,6 +144,7 @@ public class GameState : MonoBehaviour {
             if (Input.GetButtonUp(FIRE))
             {
                 SoundBoard.PlayStartup();
+                SoundBoard.PlayMusic(true);
                 State = GlobalState.Playing;
             }
         }

@@ -125,12 +125,12 @@ public class Hook : MonoBehaviour {
                 Player.Current.State = Player.PlayerState.Moving;
                 foreach (FishMouth fish in HookedFishes)
                 {
-                    SoundBoard.PlayDing();
                     Hook.Nibble();
                     GameState.Current.Moneys += fish.Fish.ScoreValue();
                     GameState.Current.Fishes.Remove(fish.Fish);
                     DestroyObject(fish.Fish.gameObject);
                 }
+                SoundBoard.PlayDing();
                 HookedFishes.Clear();
                 Player.Current.DoAnimation(Player.ANIM_STAND);
             }
