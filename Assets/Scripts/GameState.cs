@@ -54,7 +54,7 @@ public class GameState : MonoBehaviour {
     void SetStartingValues()
     {
         Moneys = 3;
-        Times = 0.15f * 60;
+        Times = 2 * 60;
         State = GlobalState.Paused;
     }
 
