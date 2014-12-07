@@ -56,6 +56,7 @@ public class Hook : MonoBehaviour {
     {
         if (Random.value <= Current.NibbleChance)
         {
+            SoundBoard.PlayEatBait();
             ClearBait();
         }
     }
@@ -89,6 +90,7 @@ public class Hook : MonoBehaviour {
         {
             if (Mathf.Abs(Input.GetAxis(VERTICAL)) > 0)
             {
+                SoundBoard.PlayCast(true);
                 Player.Current.DoAnimation(Player.ANIM_DEPTH);
                 Depth -= ReelSpeed * Input.GetAxis(VERTICAL) * Time.fixedDeltaTime * (Input.GetAxis(VERTICAL) > 0 ? ReelDownMultiplier : 1);
                 if (Depth > MaxDepth)
@@ -103,6 +105,7 @@ public class Hook : MonoBehaviour {
             }
             else
             {
+                SoundBoard.PlayCast(false);
                 Player.Current.DoAnimation(Player.ANIM_STAND);
             }
             if (Depth <= MinDepth)
@@ -118,9 +121,11 @@ public class Hook : MonoBehaviour {
             Depth -= ReelInSpeed * Time.fixedDeltaTime;
             if (Depth < MinDepth)
             {
+                SoundBoard.PlayReel(false);
                 Player.Current.State = Player.PlayerState.Moving;
                 foreach (FishMouth fish in HookedFishes)
                 {
+                    SoundBoard.PlayDing();
                     Hook.Nibble();
                     GameState.Current.Moneys += fish.Fish.ScoreValue();
                     GameState.Current.Fishes.Remove(fish.Fish);
@@ -134,6 +139,8 @@ public class Hook : MonoBehaviour {
         }
         else
         {
+            SoundBoard.PlayCast(false);
+            SoundBoard.PlayReel(false);
             _lr.enabled = false;
 
             if (Player.Current.State == Player.PlayerState.Moving && Input.GetAxis(VERTICAL) < 0 && Player.Current.CanFish)
@@ -179,6 +186,7 @@ public class Hook : MonoBehaviour {
         {
             if (Player.Current.State == Player.PlayerState.Fishing)
             {
+                SoundBoard.PlayReel(true);
                 Player.Current.DoAnimation(Player.ANIM_REEL);
                 ReelAnimTimer = 0;
                 Player.Current.State = Player.PlayerState.Reeling;

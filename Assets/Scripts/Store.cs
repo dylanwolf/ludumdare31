@@ -132,11 +132,12 @@ public class Store : MonoBehaviour {
                 if (GameState.Current.Moneys < Costs[SelectedItem])
                 {
                     // Do nothing
-                    // Play an error sound here
+                    SoundBoard.PlayCantBuy();
                 }
                 else
                 {
                     ApplyBonus();
+                    SoundBoard.PlayBuy();
                     GameState.Current.Moneys -= Costs[SelectedItem];
                     Player.Current.State = Player.PlayerState.Moving;
                     Toggle(false);

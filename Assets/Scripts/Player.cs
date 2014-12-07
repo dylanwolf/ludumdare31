@@ -135,6 +135,7 @@ public class Player : MonoBehaviour {
                 foreach (IceFloe f in PickTarget)
                 {
                     f.IsCleared = true;
+                    SoundBoard.PlayIcePick();
                 }
                 CanFish = true;
             }
